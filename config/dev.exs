@@ -25,7 +25,8 @@ config :invoicing, InvoicingWeb.Endpoint,
   secret_key_base: "qnrW2+TtmosyMmv05zr8OwWsBseWTlJw1LoNj98PP5UmWHoDZXKyxc0FgLSQDsWK",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
 # ## SSL Support
