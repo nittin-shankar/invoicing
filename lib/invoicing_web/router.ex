@@ -21,6 +21,8 @@ defmodule InvoicingWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    
+    live "/register", Accounts.RegisterLive
   end
 
   # Other scopes may use custom stacks.
