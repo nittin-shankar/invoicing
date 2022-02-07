@@ -8,6 +8,7 @@ defmodule Invoicing.Accounts.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+    field :full_name, :string
     many_to_many :organisations, Invoicing.Accounts.Organisation, join_through: "organisations_users"
 
     timestamps()
@@ -32,9 +33,9 @@ defmodule Invoicing.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password])
-    |> validate_email()
-    |> validate_password(opts)
+    |> cast(attrs, [:full_name, :email, :password])
+    |> maybe_hash_password(opts)
+    |> cast_assoc(:organisations)
   end
 
   defp validate_email(changeset) do
