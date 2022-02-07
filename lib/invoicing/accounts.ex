@@ -4,9 +4,10 @@ defmodule Invoicing.Accounts do
   """
 
   import Ecto.Query, warn: false
+  import Ecto.Changeset
   alias Invoicing.Repo
 
-  alias Invoicing.Accounts.{User, UserToken, UserNotifier}
+  alias Invoicing.Accounts.{User, UserToken, UserNotifier, Registration}
 
   ## Database getters
 
@@ -78,6 +79,33 @@ defmodule Invoicing.Accounts do
     %User{}
     |> User.registration_changeset(attrs)
     |> Repo.insert()
+  end
+
+  @doc """
+  Registers a first time user. It basically creates both the organisation and the user at the same time
+  """
+  def register_first_time_user(attrs) do
+    %Registration{}
+    |> Registration.changeset(attrs)
+    |> create_organisation_and_user()
+  end
+
+  defp create_organisation_and_user(changeset) do
+    if changeset.valid? do
+      user_attrs = %{
+        "full_name" => get_field(changeset, :full_name),
+        "email" => get_field(changeset, :email),
+        "password" => get_field(changeset, :password),
+        "organisations" => [%{"name" => get_field(changeset, :organisation_name)}]
+      }
+
+      {:ok, user} = %User{} |> User.registration_changeset(user_attrs) |> Repo.insert()
+      [organisation] = user.organisations
+
+      {:ok, user, organisation}
+    else
+      {:error, changeset}
+    end
   end
 
   @doc """

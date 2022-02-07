@@ -6,6 +6,8 @@ defmodule Invoicing.AccountsFixtures do
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
   def valid_user_password, do: "hello world!"
+  def valid_full_name, do: "name"
+  def valid_organisation_name, do: "organisation name"
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
@@ -21,6 +23,21 @@ defmodule Invoicing.AccountsFixtures do
       |> Invoicing.Accounts.register_user()
 
     user
+  end
+
+  def valid_registration_attributes(attrs \\ %{}) do
+    Enum.into(attrs, %{
+      organisation_name: valid_organisation_name(),
+      full_name: valid_full_name(),
+      email: unique_user_email(),
+      password: valid_user_password()
+    })
+  end
+
+  def registration_fixture(attrs \\ %{}) do
+    attrs
+    |> valid_registration_attributes()
+    |> Invoicing.Accounts.register_first_time_user()
   end
 
   def extract_user_token(fun) do
